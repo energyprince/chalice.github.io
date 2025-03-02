@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment, ContactShadows } from '@react-three/drei';
 import SlideToEscape from './components/SlideToEscape';
@@ -7,29 +7,81 @@ import './App.css';
 
 // 3D Model component
 function Model() {
-  const { scene } = useGLTF('/fxf3dlogo.glb');
+  const gltf = useGLTF('/fxf3dlogo.glb');
+  const modelRef = useRef();
   
-  // Make sure the model is visible and properly scaled
   useEffect(() => {
-    if (scene) {
-      // Center the model
-      scene.position.set(0, 0, 0);
+    if (gltf.scene) {
+      console.log('Model loaded successfully');
       
-      // Make sure the model is visible (adjust scale if needed)
-      scene.scale.set(1.5, 1.5, 1.5);
+      // Reset position
+      gltf.scene.position.set(-3, -2.9, 0);
+       // Rotate the model to make it vertical
+      gltf.scene.rotation.set(Math.PI/2, 0, 0);
+      // Start with a smaller scale in case the model is huge
+      gltf.scene.scale.set(50.0, 50.0, 50.0);
       
-      // Ensure proper lighting
-      scene.traverse((child) => {
+      // Add material properties to ensure visibility
+      gltf.scene.traverse((child) => {
         if (child.isMesh) {
+          // Ensure material has good defaults
+          child.material.metalness = 0.3;
+          child.material.roughness = 0.5;
+          child.material.color.set('#ffffff');  // White color
           child.castShadow = true;
           child.receiveShadow = true;
-          child.material.needsUpdate = true;
         }
       });
     }
-  }, [scene]);
+  }, [gltf]);
   
-  return <primitive object={scene} />;
+  return (
+    <group ref={modelRef}>
+      <primitive object={gltf.scene} />
+      
+      {/* Add a small sphere to mark the center/origin point */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshStandardMaterial color="red" />
+      </mesh>
+    </group>
+  );
+}
+
+// Add this component to debug model loading issues
+function ModelDebugger() {
+  useEffect(() => {
+    console.log('Debugging model loading issues...');
+    
+    // List of possible file paths to check
+    const possiblePaths = [
+      '/fxf3dlogo.glb',
+      '/models/fxf3dlogo.glb',
+      '/public/fxf3dlogo.glb',
+      '/public/models/fxf3dlogo.glb',
+      '/model.glb',
+      '/public/model.glb',
+      '/models/model.glb',
+      '/fx3dlogo.glb'
+    ];
+    
+    // Try to fetch each path to see if the file exists
+    possiblePaths.forEach(path => {
+      fetch(path)
+        .then(response => {
+          if (response.ok) {
+            console.log(`✅ File exists at: ${path}`);
+          } else {
+            console.log(`❌ File not found at: ${path}`);
+          }
+        })
+        .catch(error => {
+          console.log(`❌ Error checking ${path}:`, error);
+        });
+    });
+  }, []);
+  
+  return null; // This component doesn't render anything
 }
 
 // Preload the model
@@ -56,6 +108,7 @@ function App() {
   return (
     <div className="app">
       <GalaxyBackground />
+      <ModelDebugger /> {/* Add the debugger component */}
       
       {loading ? (
         <div className="loading">
@@ -74,36 +127,32 @@ function App() {
               
               <div className="model-container">
                 <Canvas 
-                  camera={{ position: [0, 0, 5], fov: 45 }}
+                  camera={{ position: [0, 0, 5], fov: 75 }}  // Wider field of view
                   shadows
+                  gl={{ alpha: true }}  // Enable transparency
                 >
-                  <color attach="background" args={['transparent']} />
-                  <ambientLight intensity={0.7} />
-                  <spotLight 
-                    position={[10, 10, 10]} 
-                    angle={0.15} 
-                    penumbra={1} 
-                    intensity={1} 
-                    castShadow 
-                  />
-                  <pointLight position={[-10, -10, -10]} intensity={0.5} />
-                  <Suspense fallback={null}>
+                  {/* Enhanced lighting */}
+                  <ambientLight intensity={1.0} />  
+                  <directionalLight position={[5, 5, 5]} intensity={1.0} castShadow />
+                  <directionalLight position={[-5, -5, -5]} intensity={0.5} />
+                  
+                  <Suspense fallback={
+                    <mesh>
+                      <boxGeometry args={[1, 1, 1]} />
+                      <meshStandardMaterial color="hotpink" />
+                    </mesh>
+                  }>
                     <Model />
-                    <Environment preset="city" />
-                    <ContactShadows 
-                      position={[0, -1.5, 0]}
-                      opacity={0.4}
-                      scale={10}
-                      blur={1.5}
-                      far={1.5}
-                    />
-                    <OrbitControls 
-                      enableZoom={false} 
-                      autoRotate 
-                      autoRotateSpeed={1}
-                      enablePan={false}
-                    />
+                    <Environment preset="sunset" />
                   </Suspense>
+                  
+                  {/* Enable zoom and pan to help you find your model */}
+                  <OrbitControls 
+                    enableZoom={true}
+                    enablePan={true}
+                    autoRotate={true}  // Enable auto-rotation
+                    autoRotateSpeed={3.5}  // Control rotation speed (higher = faster)
+                  />
                 </Canvas>
               </div>
               
