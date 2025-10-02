@@ -242,10 +242,6 @@ function App() {
     setView(nextView);
   };
 
-  const handleEnter = () => {
-    navigateToView(VIEW.HOME, { push: true });
-  };
-
   const handleShowExperience = () => {
     navigateToView(VIEW.LANDING, { push: true });
   };
