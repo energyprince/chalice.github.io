@@ -1,0 +1,102 @@
+.blog-root {
+  background-color: #000;
+  color: #ffffff;
+  min-height: 100vh;
+  font-family: monospace;
+}
+
+.blog-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem 4rem;
+}
+
+.blog-wrapper {
+  max-width: 700px;
+  width: 100%;
+  background-color: #000;
+  padding: 1rem 2rem 2rem;
+}
+
+.blog-hero {
+  display: block;
+  margin: 2rem auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.blog-header h1 {
+  font-size: 36pt;
+  letter-spacing: 2pt;
+  margin-bottom: 1rem;
+}
+
+.blog-highlight {
+  font-size: 1.2em;
+}
+
+.blog-cta {
+  background: none;
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.75rem;
+  text-transform: lowercase;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.blog-cta:hover,
+.blog-cta:focus {
+  background: #ffffff;
+  color: #000000;
+}
+
+.blog-cta-link {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.blog-cta-link:hover,
+.blog-cta-link:focus {
+  opacity: 0.8;
+}
+
+.blog-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 0;
+}
+
+.blog-list > li {
+  margin-bottom: 1.25rem;
+}
+
+.blog-list ul {
+  list-style: none;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.blog-list a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.blog-list a:hover,
+.blog-list a:focus {
+  text-decoration: underline;
+}
+
+.blog-header p {
+  line-height: 1.6;
+}

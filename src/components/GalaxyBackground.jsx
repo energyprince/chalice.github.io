@@ -1,6 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import './GalaxyBackground.css';
 
+// Controls how fast stars pulse (smaller = slower)
+const PULSE_SPEED = 0.02; // default was ~0.1; this is ~10x slower
+
+// Star color tuning (blue theme)
+const STAR_HUE_BASE = 220;       // ~220° = blue
+const STAR_HUE_SPREAD = 10;      // +/- around base hue
+const STAR_SATURATION = 85;      // percent
+const STAR_LIGHTNESS = 85;       // percent
+
 const GalaxyBackground = () => {
   const canvasRef = useRef(null);
   
@@ -26,7 +35,7 @@ const GalaxyBackground = () => {
         const y = Math.random() * canvas.height;
         const radius = Math.random() * 1.5;
         const opacity = Math.random();
-        const hue = Math.random() * 60 - 30; // Blue to purple range
+        const hue = (Math.random() * 2 - 1) * STAR_HUE_SPREAD; // offset around base hue
         
         stars.push({
           x,
@@ -34,7 +43,7 @@ const GalaxyBackground = () => {
           radius,
           opacity,
           hue,
-          pulse: Math.random() * 0.1,
+          pulse: Math.random() * PULSE_SPEED,
           pulseFactor: 0,
           pulseDirection: Math.random() > 0.5 ? 1 : -1,
           trail: Math.random() > 0.98, // Some stars have trails
@@ -50,8 +59,8 @@ const GalaxyBackground = () => {
       
       // Create gradient background
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, 'rgba(5, 0, 20, 1)');
-      gradient.addColorStop(1, 'rgba(15, 5, 40, 1)');
+      gradient.addColorStop(0, 'rgb(0, 0, 20)');
+      gradient.addColorStop(1, 'rgb(0, 0, 0)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
@@ -69,14 +78,16 @@ const GalaxyBackground = () => {
         const currentRadius = star.radius * (1 + star.pulseFactor);
         const currentOpacity = star.opacity * (1 + star.pulseFactor * 0.5);
         
+        // (halo removed)
+
         // Draw star trail if it has one
         if (star.trail) {
           const gradient = ctx.createLinearGradient(
             star.x, star.y,
             star.x - star.trailLength, star.y
           );
-          gradient.addColorStop(0, `hsla(${240 + star.hue}, 100%, 80%, ${currentOpacity})`);
-          gradient.addColorStop(1, `hsla(${240 + star.hue}, 100%, 80%, 0)`);
+          gradient.addColorStop(0, `hsla(${STAR_HUE_BASE + star.hue}, ${STAR_SATURATION}%, ${STAR_LIGHTNESS}%, ${currentOpacity})`);
+          gradient.addColorStop(1, `hsla(${STAR_HUE_BASE + star.hue}, ${STAR_SATURATION}%, ${STAR_LIGHTNESS}%, 0)`);
           
           ctx.beginPath();
           ctx.moveTo(star.x, star.y);
@@ -96,8 +107,10 @@ const GalaxyBackground = () => {
         // Draw star
         ctx.beginPath();
         ctx.arc(star.x, star.y, currentRadius, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${240 + star.hue}, 100%, 80%, ${currentOpacity})`;
+        ctx.fillStyle = `hsla(${STAR_HUE_BASE + star.hue}, ${STAR_SATURATION}%, ${STAR_LIGHTNESS}%, ${currentOpacity})`;
         ctx.fill();
+
+        // (specular highlight removed)
       });
       
       // Request next frame
@@ -107,9 +120,9 @@ const GalaxyBackground = () => {
     // Draw nebula clouds
     const drawNebulaClouds = () => {
       const clouds = [
-        { x: canvas.width * 0.2, y: canvas.height * 0.3, radius: canvas.width * 0.3, color: 'rgba(70, 0, 150, 0.05)' },
-        { x: canvas.width * 0.7, y: canvas.height * 0.6, radius: canvas.width * 0.4, color: 'rgba(0, 50, 150, 0.05)' },
-        { x: canvas.width * 0.5, y: canvas.height * 0.2, radius: canvas.width * 0.25, color: 'rgba(150, 50, 200, 0.03)' }
+        { x: canvas.width * 0.2, y: canvas.height * 0.3, radius: canvas.width * 0.3, color: 'rgba(0, 0, 0, 0.05)' },
+        { x: canvas.width * 0.7, y: canvas.height * 0.6, radius: canvas.width * 0.4, color: 'rgba(0, 0, 0, 0.05)' },
+        { x: canvas.width * 0.5, y: canvas.height * 0.2, radius: canvas.width * 0.25, color: 'rgba(0, 0, 0, 0.03)' }
       ];
       
       clouds.forEach(cloud => {
@@ -119,7 +132,7 @@ const GalaxyBackground = () => {
           cloud.x, cloud.y, cloud.radius
         );
         gradient.addColorStop(0, cloud.color);
-        gradient.addColorStop(1, 'rgba(0, 0, 30, 0)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = gradient;
         ctx.arc(cloud.x, cloud.y, cloud.radius, 0, Math.PI * 2);
         ctx.fill();
