@@ -7,13 +7,16 @@
 body, html {
   font-family: 'Cinzel Decorative', cursive;
   height: 100%;
-  overflow: hidden;
   color: white;
 }
 
 .app {
   position: relative;
   width: 100vw;
+  min-height: 100vh;
+}
+
+.app.landing {
   height: 100vh;
   overflow: hidden;
 }

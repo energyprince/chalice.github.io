@@ -1,6 +1,6 @@
 import React from 'react';
 import './Blog.css';
-import blogImage from '../assets/output_displacement_smokey.png';
+import blogImage from '../assets/output_displacement_no_white.png';
 
 function Blog({ onShowExperience }) {
   return (

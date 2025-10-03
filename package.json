@@ -1,6 +1,7 @@
 {
   "name": "fiestaxfiasco",
   "version": "0.1.0",
+  "homepage": "https://energyprince.github.io",
   "private": true,
   "dependencies": {
     "@react-three/drei": "9.88.0",
@@ -19,7 +20,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "postinstall": "node scripts/patch-mediapipe-sourcemap.js"
+    "postinstall": "node scripts/patch-mediapipe-sourcemap.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -38,5 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
